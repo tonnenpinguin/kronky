@@ -47,7 +47,7 @@ defmodule Kronky.ChangesetParserCustomFieldConstructorTest do
   end
 
   defp changeset(params) do
-    cast(%Post{}, params, ~w(title body upvotes decimal topics virtual))
+    cast(%Post{}, params, ~w(title body upvotes decimal topics virtual)a)
   end
 
   defmodule CustomFieldConstructor do
@@ -77,7 +77,7 @@ defmodule Kronky.ChangesetParserCustomFieldConstructorTest do
 
   test "nested fields" do
     changeset =
-      %{"author" => %{"name" => ""}}
+      %{:author => %{:name => ""}}
       |> changeset()
       |> cast_assoc(:author,
         with: fn author, params ->
@@ -93,7 +93,7 @@ defmodule Kronky.ChangesetParserCustomFieldConstructorTest do
 
   test "nested fields with index" do
     changeset =
-      %{"tags" => [%{"name" => ""}, %{"name" => ""}]}
+      %{:tags => [%{:name => ""}, %{:name => ""}]}
       |> changeset()
       |> cast_assoc(:tags,
         with: fn tag, params ->

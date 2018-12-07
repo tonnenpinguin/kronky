@@ -47,7 +47,7 @@ defmodule Kronky.ChangesetParserTest do
   end
 
   defp changeset(params) do
-    cast(%Post{}, params, ~w(title body upvotes decimal topics virtual))
+    cast(%Post{}, params, ~w(title body upvotes decimal topics virtual)a)
   end
 
   describe "interpolate_message/1" do
@@ -63,7 +63,7 @@ defmodule Kronky.ChangesetParserTest do
   describe "multiples" do
     test "multiple fields with errors" do
       changeset =
-        %{"title" => "foobar", "virtual" => "foobar"}
+        %{:title => "foobar", :virtual => "foobar"}
         |> changeset()
         |> validate_format(:title, ~r/@/)
         |> validate_length(:virtual, is: 4)
@@ -76,7 +76,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "multiple errors on one field" do
       changeset =
-        %{"title" => "foobar"}
+        %{:title => "foobar"}
         |> changeset()
         |> validate_format(:title, ~r/@/)
         |> validate_length(:title, is: 4)
@@ -91,7 +91,7 @@ defmodule Kronky.ChangesetParserTest do
   describe "nested" do
     test "nested fields with errors" do
       changeset =
-        %{"author" => %{"name" => ""}}
+        %{:author => %{:name => ""}}
         |> changeset()
         |> cast_assoc(:author,
           with: fn author, params ->
@@ -107,7 +107,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "nested has many fields with errors" do
       changeset =
-        %{"tags" => [%{"name" => ""}, %{"name" => ""}]}
+        %{:tags => [%{:name => ""}, %{:name => ""}]}
         |> changeset()
         |> cast_assoc(:tags,
           with: fn tag, params ->
@@ -143,7 +143,7 @@ defmodule Kronky.ChangesetParserTest do
   describe "validations" do
     test "custom with code" do
       changeset =
-        %{"title" => "foobar"}
+        %{:title => "foobar"}
         |> changeset()
         |> add_error(:title, "can't be %{illegal}", code: "foobar", illegal: "foobar")
 
@@ -158,7 +158,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "custom without code" do
       changeset =
-        %{"title" => "foobar"}
+        %{:title => "foobar"}
         |> changeset()
         |> add_error(:title, "can't be %{illegal}", illegal: "foobar")
 
@@ -173,7 +173,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "format validation" do
       changeset =
-        %{"title" => "foobar"}
+        %{:title => "foobar"}
         |> changeset()
         |> validate_format(:title, ~r/@/)
 
@@ -188,7 +188,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "inclusion validation" do
       changeset =
-        %{"title" => "hello"}
+        %{:title => "hello"}
         |> changeset()
         |> validate_inclusion(:title, ~w(world))
 
@@ -203,7 +203,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "subset validation" do
       changeset =
-        %{"topics" => ["cat", "laptop"]}
+        %{:topics => ["cat", "laptop"]}
         |> changeset()
         |> validate_subset(:topics, ~w(cat dog))
 
@@ -218,7 +218,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "exclusion validation" do
       changeset =
-        %{"title" => "world"}
+        %{:title => "world"}
         |> changeset()
         |> validate_exclusion(:title, ~w(world))
 
@@ -233,7 +233,7 @@ defmodule Kronky.ChangesetParserTest do
 
     test "min validation" do
       changeset =
-        %{"title" => "w"}
+        %{:title => "w"}
         |> changeset()
         |> validate_length(:title, min: 2, max: 3)
 
@@ -241,14 +241,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :min
       assert message.key == :title
       assert message.field == :title
-      assert message.options == [count: 2]
+      assert message.options == [count: 2, kind: :min]
       assert message.message =~ ~r/2/
       assert message.template =~ ~r/%{count}/
     end
 
     test "max validation" do
       changeset =
-        %{"title" => "world"}
+        %{:title => "world"}
         |> changeset()
         |> validate_length(:title, min: 2, max: 3)
 
@@ -256,14 +256,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :max
       assert message.key == :title
       assert message.field == :title
-      assert message.options == [count: 3]
+      assert message.options == [count: 3, kind: :max]
       assert message.message =~ ~r/3/
       assert message.template =~ ~r/%{count}/
     end
 
     test "length validation" do
       changeset =
-        %{"title" => "world"}
+        %{:title => "world"}
         |> changeset()
         |> validate_length(:title, is: 7)
 
@@ -271,14 +271,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :length
       assert message.key == :title
       assert message.field == :title
-      assert message.options == [count: 7]
+      assert message.options == [count: 7, kind: :is]
       assert message.message =~ ~r/7/
       assert message.template =~ ~r/%{count}/
     end
 
     test "greater_than validation" do
       changeset =
-        %{"upvotes" => 3}
+        %{:upvotes => 3}
         |> changeset()
         |> validate_number(:upvotes, greater_than: 10)
 
@@ -286,14 +286,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :greater_than
       assert message.key == :upvotes
       assert message.field == :upvotes
-      assert message.options == [number: 10]
+      assert message.options == [kind: :greater_than, number: 10]
       assert message.message =~ ~r/10/
       assert message.template =~ ~r/%{number}/
     end
 
     test "greater_than_or_equal_to validation" do
       changeset =
-        %{"upvotes" => 3}
+        %{:upvotes => 3}
         |> changeset()
         |> validate_number(:upvotes, greater_than_or_equal_to: 10)
 
@@ -301,14 +301,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :greater_than_or_equal_to
       assert message.key == :upvotes
       assert message.field == :upvotes
-      assert message.options == [number: 10]
+      assert message.options == [kind: :greater_than_or_equal_to, number: 10]
       assert message.message =~ ~r/10/
       assert message.template =~ ~r/%{number}/
     end
 
     test "less_than validation" do
       changeset =
-        %{"upvotes" => 3}
+        %{:upvotes => 3}
         |> changeset()
         |> validate_number(:upvotes, less_than: 1)
 
@@ -316,14 +316,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :less_than
       assert message.key == :upvotes
       assert message.field == :upvotes
-      assert message.options == [number: 1]
+      assert message.options == [kind: :less_than, number: 1]
       assert message.message =~ ~r/1/
       assert message.template =~ ~r/%{number}/
     end
 
     test "less_than_or_equal_to validation" do
       changeset =
-        %{"upvotes" => 3}
+        %{:upvotes => 3}
         |> changeset()
         |> validate_number(:upvotes, less_than_or_equal_to: 1)
 
@@ -331,14 +331,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :less_than_or_equal_to
       assert message.key == :upvotes
       assert message.field == :upvotes
-      assert message.options == [number: 1]
+      assert message.options == [kind: :less_than_or_equal_to, number: 1]
       assert message.message =~ ~r/1/
       assert message.template =~ ~r/%{number}/
     end
 
     test "equal_to validation" do
       changeset =
-        %{"upvotes" => 3}
+        %{:upvotes => 3}
         |> changeset()
         |> validate_number(:upvotes, equal_to: 1)
 
@@ -346,14 +346,14 @@ defmodule Kronky.ChangesetParserTest do
       assert message.code == :equal_to
       assert message.key == :upvotes
       assert message.field == :upvotes
-      assert message.options == [number: 1]
+      assert message.options == [kind: :equal_to, number: 1]
       assert message.message =~ ~r/1/
       assert message.template =~ ~r/%{number}/
     end
 
     test "confirmation validation" do
       changeset =
-        %{"title" => "title", "title_confirmation" => "not title"}
+        %{:title => "title", :title_confirmation => "not title"}
         |> changeset()
         |> validate_confirmation(:title, required: true)
 
@@ -397,10 +397,10 @@ defmodule Kronky.ChangesetParserTest do
     end
 
     test "cast validation" do
-      params = %{"body" => :world}
+      params = %{:body => :world}
       struct = %Post{}
 
-      changeset = cast(struct, params, ~w(body))
+      changeset = cast(struct, params, ~w(body)a)
 
       assert [%ValidationMessage{} = message] = ChangesetParser.extract_messages(changeset)
       assert message.code == :cast
@@ -414,7 +414,7 @@ defmodule Kronky.ChangesetParserTest do
 
   test "errors as map" do
     changeset =
-      %{"title" => "foobar", "virtual" => "foobar"}
+      %{:title => "foobar", :virtual => "foobar"}
       |> changeset()
       |> validate_format(:title, ~r/@/)
       |> validate_length(:virtual, is: 4)
@@ -422,6 +422,6 @@ defmodule Kronky.ChangesetParserTest do
     result = ChangesetParser.messages_as_map(changeset)
     assert %{title: title_errors, virtual: virtual_errors} = result
     assert [{"has invalid format", [validation: :format]}] = title_errors
-    assert [{"should be %{count} character(s)", [count: 4, validation: :length, is: 4]}] = virtual_errors
+    assert [{"should be %{count} character(s)", [count: 4, validation: :length, kind: :is]}] = virtual_errors
   end
 end

@@ -20,41 +20,26 @@ defmodule Kronky.Mixfile do
       deps: deps(),
       package: package(),
       description: description(),
-      # docs
       name: "Kronky",
       source_url: "https://github.com/Ethelo/kronky",
       homepage_url: "https://github.com/Ethelo/kronky",
       docs: [
-        # The main page in the docs
         main: "readme",
         extras: ["README.md"]
       ]
     ]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
-    # Specify extra applications you'll use from Erlang/Elixir
     [extra_applications: [:logger], env: [field_constructor: Kronky.FieldConstructor]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:my_dep, "~> 0.4.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:my_dep, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto, ">= 2.1.4"},
-      {:absinthe, "~> 1.3"},
-      {:credo, "~> 0.7.4", only: [:dev, :test]},
-      {:excoveralls, "~> 0.6", only: :test},
+      {:ecto, ">= 3.0.0"},
+      {:absinthe, "~> 1.4"},
+      {:credo, "~> 1.0", only: [:dev, :test]},
+      {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false}
     ]
   end

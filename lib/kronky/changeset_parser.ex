@@ -160,9 +160,9 @@ defmodule Kronky.ChangesetParser do
   defp do_to_code(%{validation: :subset}), do: :subset
   defp do_to_code(%{validation: :acceptance}), do: :acceptance
   defp do_to_code(%{validation: :confirmation}), do: :confirmation
-  defp do_to_code(%{validation: :length, is: _}), do: :length
-  defp do_to_code(%{validation: :length, min: _}), do: :min
-  defp do_to_code(%{validation: :length, max: _}), do: :max
+  defp do_to_code(%{validation: :length, kind: :is}), do: :length
+  defp do_to_code(%{validation: :length, kind: :min}), do: :min
+  defp do_to_code(%{validation: :length, kind: :max}), do: :max
 
   defp do_to_code(%{validation: :number, message: message}) do
     cond do
